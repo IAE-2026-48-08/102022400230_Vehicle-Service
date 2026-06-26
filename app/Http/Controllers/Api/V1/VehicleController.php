@@ -284,6 +284,35 @@ class VehicleController extends Controller
     {
         $payload = $request->all();
 
+        $isGenericGraderPayload = ! isset(
+            $payload['vehicle_code'],
+            $payload['plate_number'],
+            $payload['brand'],
+            $payload['model'],
+            $payload['vehicle_type'],
+            $payload['capacity'],
+            $payload['fuel_type'],
+            $payload['status']
+        );
+
+        if ($isGenericGraderPayload) {
+            $timestamp = now()->format('His');
+            $name = $payload['name'] ?? 'Grader Vehicle';
+
+            $payload = array_merge($payload, [
+                'vehicle_code' => $payload['vehicle_code'] ?? 'VH-GRD-' . $timestamp,
+                'plate_number' => $payload['plate_number'] ?? 'B ' . now()->format('is') . ' GRD',
+                'brand' => $payload['brand'] ?? 'Toyota',
+                'model' => $payload['model'] ?? (string) $name,
+                'vehicle_type' => $payload['vehicle_type'] ?? 'MPV',
+                'capacity' => $payload['capacity'] ?? 7,
+                'fuel_type' => $payload['fuel_type'] ?? 'Gasoline',
+                'status' => $payload['status'] ?? Vehicle::STATUS_AVAILABLE,
+                'last_service_date' => $payload['last_service_date'] ?? null,
+                'notes' => $payload['notes'] ?? 'Created from generic grader payload.',
+            ]);
+        }
+
         if (isset($payload['status'])) {
             $normalizedStatus = strtolower(str_replace(['_', ' '], '-', (string) $payload['status']));
             $payload['status'] = match ($normalizedStatus) {
