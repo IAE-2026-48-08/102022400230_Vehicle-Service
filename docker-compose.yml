@@ -1,0 +1,35 @@
+services:
+  vehicle-service:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: Vehicle-Service
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/database/database.sqlite
+      X_IAE_KEY_VALUE: "102022400230"
+      LIGHTHOUSE_SCHEMA_CACHE_ENABLE: "false"
+      SSO_BASE_URL: https://iae-sso.virtualfri.id
+      SSO_ISSUER: https://iae-sso.virtualfri.id
+      SSO_AUDIENCE: vehicle-service
+      SSO_ALLOWED_ROLES: fleet_admin,dispatch_admin
+      SSO_M2M_API_KEY: ""
+      SSO_USER_EMAIL: ""
+      SSO_USER_PASSWORD: ""
+      LEGACY_AUDIT_MODE: mock
+      LEGACY_AUDIT_SOAP_URL: https://iae-sso.virtualfri.id/soap/v1/audit
+      IAE_TEAM_ID: "102022400230"
+      LEGACY_AUDIT_ACTIVITY_NAME: VehicleDispatched
+      RABBITMQ_DRIVER: mock
+      RABBITMQ_ENABLED: "false"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      RABBITMQ_VHOST: /
+      RABBITMQ_EXCHANGE: iae.central.exchange
+      RABBITMQ_ROUTING_KEY: vehicle.dispatched
+      RABBITMQ_HTTP_PUBLISH_URL: https://iae-sso.virtualfri.id/api/v1/messages/publish

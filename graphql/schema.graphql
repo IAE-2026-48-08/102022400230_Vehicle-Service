@@ -1,0 +1,23 @@
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Query {
+    vehicles: [Vehicle!]! @all(model: "App\\Models\\Vehicle")
+    vehicle(id: ID! @eq): Vehicle @find(model: "App\\Models\\Vehicle")
+}
+
+type Vehicle {
+    id: ID!
+    vehicle_code: String!
+    plate_number: String!
+    brand: String!
+    model: String!
+    vehicle_type: String!
+    capacity: Int!
+    fuel_type: String!
+    status: String!
+    last_service_date: Date
+    notes: String
+    created_at: DateTime!
+    updated_at: DateTime!
+}
