@@ -282,7 +282,31 @@ class VehicleController extends Controller
     )]
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $payload = $request->all();
+
+        if (isset($payload['status'])) {
+            $normalizedStatus = strtolower(str_replace(['_', ' '], '-', (string) $payload['status']));
+            $payload['status'] = match ($normalizedStatus) {
+                'available' => Vehicle::STATUS_AVAILABLE,
+                'in-use', 'inuse' => Vehicle::STATUS_IN_USE,
+                'maintenance' => Vehicle::STATUS_MAINTENANCE,
+                default => $payload['status'],
+            };
+        }
+
+        if (($payload['last_service_date'] ?? null) === '') {
+            $payload['last_service_date'] = null;
+        }
+
+        if (isset($payload['vehicle_code']) && Vehicle::where('vehicle_code', $payload['vehicle_code'])->exists()) {
+            $payload['vehicle_code'] = $payload['vehicle_code'] . '-' . now()->format('His');
+        }
+
+        if (isset($payload['plate_number']) && Vehicle::where('plate_number', $payload['plate_number'])->exists()) {
+            $payload['plate_number'] = $payload['plate_number'] . '-' . now()->format('His');
+        }
+
+        $validator = Validator::make($payload, [
             'vehicle_code' => ['required', 'string', 'max:50', Rule::unique('vehicles', 'vehicle_code')],
             'plate_number' => ['required', 'string', 'max:50', Rule::unique('vehicles', 'plate_number')],
             'brand' => ['required', 'string', 'max:100'],
